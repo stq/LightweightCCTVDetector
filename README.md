@@ -1,11 +1,11 @@
 # LightweightCCTVDetector
 
-A second-layer motion detection service for static IP cameras. Cameras that detect motion by pixel change alone produce excessive false alarms from shadows, clouds, and wind. Detector2 watches the camera's FTP output folder and applies AI-based object recognition to filter out these false positives — only alerting when a real person, animal, vehicle, or unknown object is present.
+A second-layer motion detection service for static IP cameras. Cameras that detect motion by pixel change alone produce excessive false alarms from shadows, clouds, and wind. LightweightCCTVDetector watches the camera's FTP output folder and applies AI-based object recognition to filter out these false positives — only alerting when a real person, animal, vehicle, or unknown object is present.
 
 ## How it works
 
 1. Camera saves JPEG images to a local FTP folder on motion trigger
-2. Detector2 watches that folder with [chokidar](https://github.com/paulmillr/chokidar)
+2. LightweightCCTVDetector watches that folder with [chokidar](https://github.com/paulmillr/chokidar)
 3. Each new image is compared to a stored "safe" baseline image using pixel diff
 4. If significant change is detected, [TensorFlow.js COCO-SSD](https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd) runs inference on the frame
 5. Confirmed detections send an alert (with annotated image) via **email** and/or **Telegram**
@@ -24,8 +24,8 @@ Tested on a [Youyeetoo X1](https://www.youyeetoo.com/products/x1-single-board-co
 ## Installation
 
 ```bash
-git clone https://github.com/your-username/detector2.git
-cd detector2
+git clone https://github.com/stq/LightweightCCTVDetector.git
+cd LightweightCCTVDetector
 npm install
 cp .env.example .env
 ```

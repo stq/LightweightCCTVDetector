@@ -1,0 +1,22 @@
+{
+  "detection": {
+    "compareWidth": 640,
+    "compareHeight": 480,
+    "pixelDiffThreshold": 25,
+    "minChangedRatio": 0.015,
+    "minBlobArea": 300,
+    "minBlobDensity": 0.08,
+    "aiConfidenceThreshold": 0.45,
+    "imageExtensions": [".jpg", ".jpeg", ".png", ".bmp"]
+  },
+  "safeImage": {
+    "updateIntervalMs": 1800000,
+    "lockoutAfterAlertMs": 300000
+  },
+  "notifications": {
+    "cooldownMs": 0,
+    "maxImageSizeBytes": 10485760
+  },
+  "watchDebounceMs": 1000,
+  "logLevel": "info"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "detector2",
+  "version": "1.0.0",
+  "description": "Second-layer motion detection: people, animals, unknown objects via FTP camera folder",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "install-service": "node scripts/install-service.js",
+    "uninstall-service": "node scripts/uninstall-service.js"
+  },
+  "dependencies": {
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "axios": "^1.7.9",
+    "chokidar": "^3.6.0",
+    "dotenv": "^16.4.7",
+    "form-data": "^4.0.5",
+    "nodemailer": "^6.9.16",
+    "sharp": "^0.33.5"
+  }
+}

@@ -10,7 +10,7 @@
     "start": "node src/index.js",
     "install-service": "node scripts/install-service.js",
     "uninstall-service": "node scripts/uninstall-service.js",
-    "status": "schtasks /Query /TN \"LightweightCCTVDetector\" /FO LIST /V",
+    "status": "node scripts/status.js",
     "test": "node scripts/test-notify.js"
   },
   "dependencies": {

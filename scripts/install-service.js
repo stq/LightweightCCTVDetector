@@ -1,7 +1,7 @@
 'use strict';
 /**
- * Register LightweightCCTVDetector as a Windows Scheduled Task that starts at logon
- * and restarts automatically.
+ * Register LightweightCCTVDetector as a Windows Scheduled Task that starts at system boot
+ * under the SYSTEM account (no user login required).
  *
  * Run once (as Administrator):
  *   node scripts/install-service.js
@@ -28,7 +28,8 @@ if (!fs.existsSync(ENV_FILE)) {
 }
 
 // schtasks /Create arguments
-// /SC ONLOGON  – runs when any user logs on (also covers auto-logon)
+// /SC ONSTART  – runs at system boot, no user login required
+// /RU SYSTEM   – runs as SYSTEM account, no password needed
 // /RL HIGHEST  – run with highest privileges so it can watch system folders
 // /F           – force overwrite if task already exists
 const cmd = [
@@ -36,10 +37,10 @@ const cmd = [
   '/F',
   '/TN',  quote(TASK_NAME),
   '/TR',  quote(`${NODE_EXE} ${SCRIPT} >> ${LOG_FILE} 2>&1`),
-  '/SC',  'ONLOGON',
+  '/SC',  'ONSTART',
+  '/RU',  'SYSTEM',
   '/RL',  'HIGHEST',
-  '/IT',           // interact with desktop (optional – helps with tray apps)
-  '/DELAY', '0001:00',  // 1-minute delay after logon (let FTP server start first)
+  '/DELAY', '0001:00',  // 1-minute delay after boot (let FTP server start first)
 ].join(' ');
 
 console.log(`Registering Windows Scheduled Task: ${TASK_NAME}`);

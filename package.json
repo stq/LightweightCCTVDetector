@@ -10,7 +10,8 @@
     "start": "node src/index.js",
     "install-service": "node scripts/install-service.js",
     "uninstall-service": "node scripts/uninstall-service.js",
-    "status": "schtasks /Query /TN \"LightweightCCTVDetector\" /FO LIST /V"
+    "status": "schtasks /Query /TN \"LightweightCCTVDetector\" /FO LIST /V",
+    "test": "node scripts/test-notify.js"
   },
   "dependencies": {
     "@tensorflow-models/coco-ssd": "^2.2.3",

@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Register Detector2 as a Windows Scheduled Task that starts at logon
+ * Register LightweightCCTVDetector as a Windows Scheduled Task that starts at logon
  * and restarts automatically.
  *
  * Run once (as Administrator):
@@ -15,7 +15,7 @@ const path = require('path');
 const fs   = require('fs');
 
 const ROOT      = path.resolve(__dirname, '..');
-const TASK_NAME = 'Detector2';
+const TASK_NAME = 'LightweightCCTVDetector';
 const NODE_EXE  = process.execPath; // full path to node.exe
 const SCRIPT    = path.join(ROOT, 'src', 'index.js');
 const LOG_FILE  = path.join(ROOT, 'service-start.log');

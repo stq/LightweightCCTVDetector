@@ -1,7 +1,7 @@
 'use strict';
 const { execSync } = require('child_process');
 
-const TASK_NAME = 'Detector2';
+const TASK_NAME = 'LightweightCCTVDetector';
 
 try {
   execSync(`schtasks /Delete /F /TN "${TASK_NAME}"`, { stdio: 'inherit' });

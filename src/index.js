@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Detector2 – entry point.
+ * LightweightCCTVDetector – entry point.
  *
  * Camera configuration is read from environment variables:
  *
@@ -78,7 +78,7 @@ if (cameras.length === 0) {
 const logFolder = process.env.LOG_FOLDER || cameras[0].folder;
 logger.init(logFolder, cfg.logLevel);
 
-logger.info('=== Detector2 starting ===');
+logger.info('=== LightweightCCTVDetector starting ===');
 logger.info(`cameras      : ${cameras.map((c) => `${c.name} → ${c.folder}`).join(' | ')}`);
 logger.info(`email        : ${cfg.email.enabled ? cfg.email.to : 'disabled'}`);
 logger.info(`telegram     : ${cfg.telegram.enabled ? `chat ${cfg.telegram.chatId}` : 'disabled'}`);

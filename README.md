@@ -44,6 +44,9 @@ npm start
 # Run once as Administrator
 npm run install-service
 
+# Check if the service is running
+npm run status
+
 # To remove
 npm run uninstall-service
 ```

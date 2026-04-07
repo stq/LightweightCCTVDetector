@@ -1,13 +1,11 @@
 'use strict';
 /**
- * Register LightweightCCTVDetector as a Windows Scheduled Task that starts at system boot
- * under the SYSTEM account (no user login required).
+ * Register LightweightCCTVDetector as a Windows Scheduled Task that starts at
+ * system boot under the SYSTEM account (no user login required), then starts
+ * the service immediately.
  *
  * Run once (as Administrator):
- *   node scripts/install-service.js
- *
- * To remove:
- *   node scripts/uninstall-service.js
+ *   npm run install
  */
 
 const { execSync } = require('child_process');
@@ -16,7 +14,7 @@ const fs   = require('fs');
 
 const ROOT      = path.resolve(__dirname, '..');
 const TASK_NAME = 'LightweightCCTVDetector';
-const NODE_EXE  = process.execPath; // full path to node.exe
+const NODE_EXE  = process.execPath;
 const SCRIPT    = path.join(ROOT, 'src', 'index.js');
 const LOG_FILE  = path.join(ROOT, 'service-start.log');
 const ENV_FILE  = path.join(ROOT, '.env');
@@ -27,12 +25,11 @@ if (!fs.existsSync(ENV_FILE)) {
   process.exit(1);
 }
 
-// schtasks /Create arguments
 // /SC ONSTART  – runs at system boot, no user login required
 // /RU SYSTEM   – runs as SYSTEM account, no password needed
 // /RL HIGHEST  – run with highest privileges so it can watch system folders
 // /F           – force overwrite if task already exists
-const cmd = [
+const createCmd = [
   'schtasks', '/Create',
   '/F',
   '/TN',  quote(TASK_NAME),
@@ -40,20 +37,23 @@ const cmd = [
   '/SC',  'ONSTART',
   '/RU',  'SYSTEM',
   '/RL',  'HIGHEST',
-  '/DELAY', '0001:00',  // 1-minute delay after boot (let FTP server start first)
+  '/DELAY', '0001:00',
 ].join(' ');
 
-console.log(`Registering Windows Scheduled Task: ${TASK_NAME}`);
-console.log(`Command: ${cmd}`);
-
+console.log(`Registering scheduled task: ${TASK_NAME}`);
 try {
-  execSync(cmd, { stdio: 'inherit' });
-  console.log('\nService installed successfully.');
-  console.log(`Start it now with:  schtasks /Run /TN "${TASK_NAME}"`);
-  console.log(`Or reboot and it will start automatically.`);
-} catch (err) {
-  console.error('ERROR: Failed to register scheduled task.');
-  console.error('Make sure you are running this script as Administrator.');
+  execSync(createCmd, { stdio: 'inherit' });
+} catch {
+  console.error('ERROR: Failed to register scheduled task. Run as Administrator.');
+  process.exit(1);
+}
+
+console.log('\nStarting service…');
+try {
+  execSync(`schtasks /Run /TN "${TASK_NAME}"`, { stdio: 'inherit' });
+  console.log('Service started.');
+} catch {
+  console.error('ERROR: Task registered but failed to start. Try rebooting.');
   process.exit(1);
 }
 

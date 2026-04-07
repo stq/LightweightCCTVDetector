@@ -8,8 +8,9 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "install-service": "node scripts/install-service.js",
-    "uninstall-service": "node scripts/uninstall-service.js",
+    "install": "node scripts/install.js",
+    "uninstall": "node scripts/uninstall.js",
+    "reinstall": "node scripts/uninstall.js && node scripts/install.js",
     "status": "node scripts/status.js",
     "test": "node scripts/test-notify.js"
   },

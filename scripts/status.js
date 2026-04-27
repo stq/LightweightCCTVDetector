@@ -19,7 +19,6 @@ const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp']);
 console.log('=== Service status ===');
 try {
   const out = execSync(`schtasks /Query /TN "${TASK_NAME}" /FO LIST /V`, { encoding: 'utf8' });
-  // Print only the most useful lines to keep output short
   const keep = ['TaskName', 'Status', 'Last Run Time', 'Next Run Time', 'Last Result', 'Run As User'];
   out.split('\n').forEach((line) => {
     const trimmed = line.trim();
@@ -33,23 +32,26 @@ try {
 
 console.log('\n=== Camera folders ===');
 
-const cameras = [];
-for (let i = 1; i <= 8; i++) {
-  const folder = process.env[`CAMERA_${i}_FOLDER`];
-  if (folder) cameras.push({ name: process.env[`CAMERA_${i}_NAME`] || `Camera ${i}`, folder });
+const camerasRoot = process.env.CAMERAS_ROOT || '';
+if (!camerasRoot || !fs.existsSync(camerasRoot)) {
+  console.log('  CAMERAS_ROOT not set or does not exist (check .env).');
+  process.exit(0);
 }
-if (cameras.length === 0 && process.env.WATCH_FOLDER) {
-  cameras.push({ name: process.env.CAMERA_1_NAME || 'Camera 1', folder: process.env.WATCH_FOLDER });
+
+let cameras;
+try {
+  cameras = fs.readdirSync(camerasRoot, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => ({ name: d.name, folder: path.join(camerasRoot, d.name) }));
+} catch (e) {
+  console.log(`  Cannot read CAMERAS_ROOT: ${e.message}`);
+  process.exit(0);
 }
 
 if (cameras.length === 0) {
-  console.log('  No camera folders configured (check .env).');
+  console.log(`  No camera subfolders found in: ${camerasRoot}`);
 } else {
   for (const { name, folder } of cameras) {
-    if (!fs.existsSync(folder)) {
-      console.log(`  ${name}: folder not found – ${folder}`);
-      continue;
-    }
     let count = 0;
     let totalBytes = 0;
     try {

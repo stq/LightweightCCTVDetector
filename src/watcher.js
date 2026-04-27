@@ -8,6 +8,9 @@
  *   - safe reference image
  *   - set of already-scanned filenames (persisted to detector_scanned.txt)
  *   - processing queue
+ *
+ * When started with SCAN_EXISTING=true (set by `npm run reset`), the watcher
+ * queues all existing images sorted oldest-first before starting live watching.
  */
 
 const fs   = require('fs');
@@ -52,6 +55,12 @@ class Watcher {
     this._loadScanned();
     this._initSafeImage();
 
+    // In reset mode, queue all existing images sorted by modification time
+    // so history is replayed in chronological order.
+    if (process.env.SCAN_EXISTING === 'true') {
+      this._enqueueExisting();
+    }
+
     if (!fs.existsSync(this._folder)) {
       logger.warn(`[${this._name}] watch folder does not exist yet: ${this._folder}`);
     }
@@ -76,6 +85,35 @@ class Watcher {
     if (this._watcher) {
       this._watcher.close();
       this._watcher = null;
+    }
+  }
+
+  // ─── Existing-image scan (reset mode) ────────────────────────────────────────
+
+  _enqueueExisting() {
+    if (!fs.existsSync(this._folder)) return;
+
+    let files;
+    try {
+      files = fs.readdirSync(this._folder)
+        .filter((f) => isImage(path.join(this._folder, f)))
+        .map((f) => ({
+          fullPath: path.join(this._folder, f),
+          mtime:    fs.statSync(path.join(this._folder, f)).mtimeMs,
+        }))
+        .sort((a, b) => a.mtime - b.mtime); // oldest first
+    } catch (err) {
+      logger.warn(`[${this._name}] reset: could not read folder – ${err.message}`);
+      return;
+    }
+
+    const unscanned = files.filter((f) => !this._scanned.has(path.basename(f.fullPath)));
+    logger.info(`[${this._name}] reset: queuing ${unscanned.length} existing image(s) (oldest first)`);
+    for (const { fullPath } of unscanned) {
+      this._queue.push(fullPath);
+    }
+    if (unscanned.length > 0 && !this._processing) {
+      this._processNext();
     }
   }
 

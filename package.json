@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
+    "reset": "node scripts/reset.js",
     "install": "node scripts/install.js",
     "uninstall": "node scripts/uninstall.js",
     "reinstall": "node scripts/uninstall.js && node scripts/install.js",

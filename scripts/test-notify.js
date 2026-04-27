@@ -39,6 +39,12 @@ const cfg = {
     botToken: process.env.TELEGRAM_BOT_TOKEN || '',
     chatId:   process.env.TELEGRAM_CHAT_ID   || '',
   },
+  publicTelegram: {
+    enabled:  !!(process.env.PUBLIC_TELEGRAM_BOT_TOKEN && process.env.PUBLIC_TELEGRAM_CHAT_ID),
+    botToken: process.env.PUBLIC_TELEGRAM_BOT_TOKEN || '',
+    chatId:   process.env.PUBLIC_TELEGRAM_CHAT_ID   || '',
+    cameras:  (process.env.PUBLIC_CAMERAS || '').split(',').map((s) => s.trim()).filter(Boolean),
+  },
 };
 
 notifier.init(cfg);
@@ -58,8 +64,9 @@ const PLACEHOLDER_JPEG = Buffer.from(
 
 // ── Send ──────────────────────────────────────────────────────────────────────
 
+const testCameraName = cfg.publicTelegram.cameras[0] || 'Test Camera';
 const alert = {
-  cameraName:   'Test Camera',
+  cameraName:   testCameraName,
   category:     'TEST',
   label:        'test notification',
   imagePath:    '(no file – test run)',
@@ -68,8 +75,10 @@ const alert = {
 };
 
 console.log('Sending test notifications…');
-console.log(`  email    : ${cfg.email.enabled    ? cfg.email.to               : 'disabled'}`);
-console.log(`  telegram : ${cfg.telegram.enabled ? `chat ${cfg.telegram.chatId}` : 'disabled'}`);
+console.log(`  camera   : ${testCameraName}`);
+console.log(`  email    : ${cfg.email.enabled    ? cfg.email.to                    : 'disabled'}`);
+console.log(`  telegram : ${cfg.telegram.enabled ? `chat ${cfg.telegram.chatId}`    : 'disabled'}`);
+console.log(`  public   : ${cfg.publicTelegram.enabled ? `chat ${cfg.publicTelegram.chatId}` : 'disabled'}`);
 console.log('');
 
 notifier.send(alert).then(() => {
